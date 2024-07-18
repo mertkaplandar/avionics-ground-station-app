@@ -2,6 +2,7 @@ import sys
 import json
 import random
 import folium
+import configparser
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QCheckBox, QLabel, QPushButton, QComboBox, QLineEdit, QTabWidget, QFormLayout, QTextEdit
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtSerialPort import QSerialPort, QSerialPortInfo
@@ -15,7 +16,6 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Atmaca Roket Takımı - Yer İstasyonu Veri Görüntüleme Aracı")
         self.setFixedSize(900, 550)
-        self.setStyleSheet(open("styles/style-dark.qss", "r").read())
         self.setWindowIcon(QIcon("resources/icon.ico"))
 
         self.central_widget = QWidget(self)
@@ -24,6 +24,18 @@ class MainWindow(QMainWindow):
         self.hyi_io_status = False
 
         self.layout = QVBoxLayout(self.central_widget)
+
+        with open("config.json", "r") as file:
+            self.config_json = json.loads(file.read())
+
+            if self.config_json["theme"] == "White":
+                with open("styles/style-white.qss", "r", encoding="utf-8") as style_file:
+                    style_sheet = style_file.read()
+                    self.setStyleSheet(style_sheet)
+            elif self.config_json["theme"] == "Dark":
+                with open("styles/style-dark.qss", "r", encoding="utf-8") as style_file:
+                    style_sheet = style_file.read()
+                    self.setStyleSheet(style_sheet)
 
         self.init_port_selection_screen()
 
@@ -254,6 +266,13 @@ class MainWindow(QMainWindow):
             disconnect_button.clicked.connect(self.disconnect_port)
             form_layout_settings.addRow(disconnect_button)
 
+            form_layout_settings.addRow("", QLabel())
+
+            theme_changer = QComboBox(tab_settings)
+            theme_changer.addItems(["Dark", "White"])
+            theme_changer.currentIndexChanged.connect(self.change_theme)
+            form_layout_settings.addRow("Theme:", theme_changer)
+
             layout.addLayout(form_layout_settings)
 
             self.tab_widget.addTab(tab_settings, "Ayarlar")
@@ -366,6 +385,22 @@ class MainWindow(QMainWindow):
         self.hyi_io_status = False
         self.hyi_start_button.setEnabled(True)
         self.hyi_stop_button.setEnabled(False)
+
+    def change_theme(self, state):
+        if state == 0:
+            with open("styles/style-dark.qss", "r", encoding="utf-8") as style_file:
+                style_sheet = style_file.read()
+                self.setStyleSheet(style_sheet)
+            self.config_json["theme"] = "Dark"
+            with open("config.json", "w", encoding="utf-8") as file:
+                json.dump(self.config_json, file, indent=4, ensure_ascii=False)
+        elif state == 1:
+            with open("styles/style-white.qss", "r", encoding="utf-8") as style_file:
+                style_sheet = style_file.read()
+                self.setStyleSheet(style_sheet)
+            self.config_json["theme"] = "White"
+            with open("config.json", "w", encoding="utf-8") as file:
+                json.dump(self.config_json, file, indent=4, ensure_ascii=False)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

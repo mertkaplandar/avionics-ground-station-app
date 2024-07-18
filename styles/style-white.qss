@@ -1,0 +1,87 @@
+QMainWindow {
+    background-color: #d3d1d5;
+}
+
+QTabWidget::pane {
+    background-color: #d3d1d5;
+}
+
+QTabBar::tab {
+    background-color: #3c3c3c;
+    color: #ffffff;
+    padding: 13px 54px;
+    margin-right: 1px;
+    font-size: 14px;
+}
+
+QTabBar::tab:selected {
+    background-color: #fff;
+    color: #000;
+}
+
+QTabBar::tab:hover {
+    background-color: #0263b5;
+    color: #ffffff;
+}
+
+QLabel {
+    font-size: 17px;
+    color: #000;
+}
+
+QLineEdit {
+    border: 1px solid #0259a2;
+    border-radius: 2px;
+    padding: 8px;
+    font-size: 17px;
+    color: #000;
+}
+
+QTextEdit {
+    border: 1px solid #0259a2;
+    border-radius: 2px;
+    font-size: 17px;
+    padding: 8px;
+    color: #000;
+}
+
+QPushButton {
+    background-color: #0259a2;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 17px;
+    margin: 4px 2px;
+    border-radius: 2px;
+}
+
+QPushButton:hover {
+    background-color: #014a89;
+}
+
+QPushButton:disabled {
+    background-color: #d3d1d5; /* Etkisiz hale getirilmiş butonun arka plan rengi */
+    color: #999999; /* Etkisiz hale getirilmiş butonun metin rengi */
+    border: none; /* Kenarlık olmadığı için kenarlık rengi belirtilmemiştir */
+    padding: 8px 16px; /* Butonun iç boşluğu */
+    font-size: 17px; /* Buton metin font boyutu */
+    text-align: center; /* Metnin ortalanması */
+    text-decoration: none; /* Metin dekorasyonu */
+    margin: 4px 2px; /* Butonun kenar boşluğu */
+    border-radius: 2px; /* Buton köşe yarıçapı */
+}
+
+QComboBox {
+    border: 1px solid #0259a2;
+    border-radius: 2px;
+    padding: 4px;
+    font-size: 17px;
+    color: #000;
+}
+
+QCheckBox {
+    color: #000;
+    font-size: 17px;
+}

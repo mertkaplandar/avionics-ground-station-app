@@ -258,8 +258,8 @@ class MainWindow(QMainWindow):
             form_layout_settings = QFormLayout(tab_settings)
             
             # Bağlı olan COM port bilgisi
-            current_port_label = QLabel(f"Bağlı Port: {self.serial_port1.portName() if hasattr(self, 'serial_port1') else 'COM port bağlı değil'}", tab_settings)
-            form_layout_settings.addRow("", current_port_label)
+            current_port_label = QLabel(f"{self.serial_port.portName() if hasattr(self, 'serial_port1') else 'COM port bağlı değil'}", tab_settings)
+            form_layout_settings.addRow("Port:", current_port_label)
 
             # Bağlantıyı kesme butonu
             disconnect_button = QPushButton("Bağlantıyı Kes", tab_settings)
@@ -278,21 +278,20 @@ class MainWindow(QMainWindow):
             self.tab_widget.addTab(tab_settings, "Ayarlar")
 
     def disconnect_port(self):
-        if hasattr(self, 'serial_port1'):
-            self.serial_port1.close()
-            self.tab_widget.clear()
-            self.init_port_selection_screen()
+        self.serial_port.close()
+        self.tab_widget.clear()
+        self.init_port_selection_screen()
 
     def on_select_ports_clicked(self):
         port1 = self.combo_box_ports1.currentText()
         baud_rate1 = int(self.combo_box_baud_rate1.currentText())
-        self.serial_port1 = QSerialPort()
-        self.serial_port1.setBaudRate(baud_rate1)
-        self.serial_port1.setPortName(port1)
+        self.serial_port = QSerialPort()
+        self.serial_port.setBaudRate(baud_rate1)
+        self.serial_port.setPortName(port1)
 
-        if self.serial_port1.open(QIODevice.ReadOnly):
+        if self.serial_port.open(QIODevice.ReadOnly):
             print(f"1. Yer İstasyonu için seri port {port1} açıldı.")
-            self.serial_port1.readyRead.connect(self.read_data1)
+            self.serial_port.readyRead.connect(self.read_data1)
             self.port_selection_widget.setVisible(False)
             self.create_main_screen()
         else:
@@ -300,46 +299,51 @@ class MainWindow(QMainWindow):
 
     def read_data1(self):
         try:
-            while self.serial_port1.canReadLine():
-                data = self.serial_port1.readLine().data().decode('ascii').strip()
+            while self.serial_port.canReadLine():
+                data = self.serial_port.readLine().data().decode('ascii').strip()
                 self.text_edit_raw_data1.append(data)
-                self.update_fields1(data)
+                
+                json_data = json.loads(data)
+                if int(json_data.get("packageNumber", "")) > 0:
+                    self.update_fields1(json_data)
 
-                if self.hyi_io_status:
-                    packet = self.hyi.create_packet(team_id=int(self.hyi_team_id.text()), altitude=float(self.line_edit_altitude1.text()), rocket_latitude=float(self.line_edit_latitude1.text()), rocket_longitude=float(self.line_edit_longitude1.text()))
-                    self.hyi.write_serial_port(packet)
-                    self.packet_hyi_label.setText(self.hyi.return_packet(packet))
-                    self.packet_checksum_label.setText(str(self.hyi.checksum))
-                    self.packet_counter_label.setText(str(self.hyi.counter))
+                    if self.hyi_io_status:
+                        packet = self.hyi.create_packet(team_id=int(self.hyi_team_id.text()), altitude=float(self.line_edit_altitude1.text()), rocket_latitude=float(self.line_edit_latitude1.text()), rocket_longitude=float(self.line_edit_longitude1.text()))
+                        self.hyi.write_serial_port(packet)
+                        self.packet_hyi_label.setText(self.hyi.return_packet(packet))
+                        self.packet_checksum_label.setText(str(self.hyi.checksum))
+                        self.packet_counter_label.setText(str(self.hyi.counter))
         except UnicodeDecodeError:
             pass
+        except json.JSONDecodeError as e:
+            print(f"JSON çözümleme hatası: {e}")
+        except ValueError:
+            print("Client ID değerini girin.")
+            self.stop_hyi()
         # except Exception as e:
         #     print(f"Veri okuma hatası: {e}")
 
     def update_fields1(self, data):
         try:
-            json_data = json.loads(data)
-            self.line_edit_name1.setText(str(json_data.get("name", "")))
-            self.line_edit_package_number1.setText(str(json_data.get("packageNumber", "")))
-            self.line_edit_latitude1.setText(str(json_data.get("latitude", "")))
-            self.line_edit_longitude1.setText(str(json_data.get("longitude", "")))
-            self.line_edit_speed1.setText(str(json_data.get("speed", "")))
-            self.line_edit_pressure1.setText(str(json_data.get("pressure", "")))
-            self.line_edit_altitude1.setText(str(json_data.get("altitude", "")))
-            self.line_edit_pitch1.setText(str(json_data.get("pitch", "")))
-            self.line_edit_roll1.setText(str(json_data.get("roll", "")))
-            self.line_edit_yaw1.setText(str(json_data.get("yaw", "")))
-            self.line_edit_status1.setText(str(json_data.get("status", "")))
+            self.line_edit_name1.setText(str(data.get("name", "")))
+            self.line_edit_package_number1.setText(str(data.get("packageNumber", "")))
+            self.line_edit_latitude1.setText(str(data.get("latitude", "")))
+            self.line_edit_longitude1.setText(str(data.get("longitude", "")))
+            self.line_edit_speed1.setText(str(data.get("speed", "")))
+            self.line_edit_pressure1.setText(str(data.get("pressure", "")))
+            self.line_edit_altitude1.setText(str(data.get("altitude", "")))
+            self.line_edit_pitch1.setText(str(data.get("pitch", "")))
+            self.line_edit_roll1.setText(str(data.get("roll", "")))
+            self.line_edit_yaw1.setText(str(data.get("yaw", "")))
+            self.line_edit_status1.setText(str(data.get("status", "")))
             
             if self.map_updater_selector.isChecked():
-                latitude = json_data.get("latitude", 0.0)
-                longitude = json_data.get("longitude", 0.0)
+                latitude = data.get("latitude", 0.0)
+                longitude = data.get("longitude", 0.0)
                 self.marker1.location = [latitude, longitude]
                 self.m.location = [latitude, longitude]
                 self.m.save(self.map_path)
                 self.webview.setHtml(open(self.map_path, "r").read())
-        except json.JSONDecodeError as e:
-            print(f"JSON çözümleme hatası: {e}")
         except Exception as e:
             print(f"Güncelleme hatası: {e}")
 

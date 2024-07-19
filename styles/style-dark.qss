@@ -104,3 +104,6 @@ QCheckBox {
 QCheckBox:disabled {
     color: #999999;
 }
+QStatusBar {
+    color: #ffffff;
+}

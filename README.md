@@ -8,7 +8,7 @@
     <em>HTTP error 401 for prompt `slogan`</em>
 </p>
 <p align="center">
-	<img src="https://img.shields.io/github/license/mertkaplandar/avionics-ground-station-app?style=flat&color=0080ff" alt="license">
+	<!-- <img src="https://img.shields.io/github/license/mertkaplandar/avionics-ground-station-app?style=flat&color=0080ff" alt="license"> -->
 	<img src="https://img.shields.io/github/last-commit/mertkaplandar/avionics-ground-station-app?style=flat&logo=git&logoColor=white&color=0080ff" alt="last-commit">
 	<img src="https://img.shields.io/github/languages/top/mertkaplandar/avionics-ground-station-app?style=flat&color=0080ff" alt="repo-top-language">
 	<img src="https://img.shields.io/github/languages/count/mertkaplandar/avionics-ground-station-app?style=flat&color=0080ff" alt="repo-language-count">
@@ -143,7 +143,7 @@ Use the following command to run avionics-ground-station-app:
 python main.py
 ```
 
-### 🧪 Tests
+<!-- ### 🧪 Tests
 
 To execute tests, run:
 
@@ -151,7 +151,7 @@ To execute tests, run:
 pytest
 ```
 
----
+--- -->
 
 ## 🛠 Project Roadmap
 
@@ -159,9 +159,9 @@ pytest
 - [ ] `► INSERT-TASK-2`
 - [ ] `► ...`
 
----
+<!-- --- 
 
-## 🤝 Contributing
+ ## 🤝 Contributing
 
 Contributions are welcome! Here are several ways you can contribute:
 
@@ -196,13 +196,12 @@ Once your PR is reviewed and approved, it will be merged into the main branch.
 
 </details>
 
----
+--- -->
 
 ## 📄 License
 
 This project is protected under the [SELECT-A-LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
 
----
 
 ## 👏 Acknowledgments
 

@@ -9,7 +9,7 @@ QTabWidget::pane {
 QTabBar::tab {
     background-color: #3c3c3c;
     color: #ffffff;
-    padding: 13px 55px;
+    padding: 13px 72px;
     margin-right: 1px;
     font-size: 14px;
 }
@@ -84,4 +84,9 @@ QComboBox {
 QCheckBox {
     color: #000;
     font-size: 17px;
+}
+
+QStatusBar {
+    color: #ffffff;
+    text-align: center;
 }

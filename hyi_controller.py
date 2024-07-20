@@ -1,6 +1,5 @@
 import struct
 import serial
-import time
 
 class HYIPacket:
     def __init__(self, port, baudrate):
@@ -121,15 +120,10 @@ if __name__ == "__main__":
         angle=5.08,
         status=1
     )
-
-    # Print the packet
-    # print(hyi.print_packet(packet))
     
     # Connect to serial port and send the packet
     hyi.connect()
-    time.sleep(3)
     for i in range(100):
         hyi.write_serial_port(packet)
         print(hyi.counter_value)
-        time.sleep(1)
     print(hyi.print_packet(packet))

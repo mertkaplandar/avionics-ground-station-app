@@ -15,8 +15,10 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Atmaca Roket Takımı - Yer İstasyonu Veri Görüntüleme Aracı")
-        self.setFixedSize(900, 550)
+        self.setGeometry(400, 200, 1100, 650)
         self.setWindowIcon(QIcon("resources/icon.ico"))
+
+        self.status_bar = self.statusBar()
 
         self.hyi_io_status = False
         self.data_list = []
@@ -301,7 +303,7 @@ class MainWindow(QMainWindow):
             self.combo_box_ports.addItem(port.portName())
 
     def disconnect_port(self):
-        self.statusBar().showMessage(f"Yer İstasyonu: Seri port {self.serial_port.portName()} bağlantısı kesildi.")
+        self.status_bar.showMessage(f"Yer İstasyonu: Seri port {self.serial_port.portName()} bağlantısı kesildi.")
         self.serial_port.close()
         self.tab_widget.clear()
         self.init_port_selection_screen()
@@ -314,12 +316,12 @@ class MainWindow(QMainWindow):
         self.serial_port.setPortName(port1)
 
         if self.serial_port.open(QIODevice.ReadOnly):
-            self.statusBar().showMessage(f"Yer İstasyonu: Seri port {port1} açıldı.")
+            self.status_bar.showMessage(f"Yer İstasyonu: Seri port {port1} açıldı.")
             self.serial_port.readyRead.connect(self.read_data)
             self.port_selection_widget.setVisible(False)
             self.create_main_screen()
         else:
-            self.statusBar().showMessage(f"Yer İstasyonu: Seri port {port1} açılamadı.")
+            self.status_bar.showMessage(f"Yer İstasyonu: Seri port {port1} açılamadı.")
 
     def read_data(self):
         try:
@@ -328,6 +330,7 @@ class MainWindow(QMainWindow):
                 self.text_edit_raw_data1.append(data)
                 
                 json_data = json.loads(data)
+                
                 self.update_fields(json_data)
 
                 timestamp = datetime.datetime.now()
@@ -343,13 +346,13 @@ class MainWindow(QMainWindow):
         except UnicodeDecodeError:
             pass
         except json.JSONDecodeError as e:
-            # self.statusBar().showMessage(f"JSON çözümleme hatası: {e}")
+            # self.status_bar.showMessage(f"JSON çözümleme hatası: {e}")
             pass
         except ValueError:
-            self.statusBar().showMessage("Client ID değerini girin.")
+            self.status_bar.showMessage("Client ID değerini girin.")
             self.stop_hyi()
         except Exception as e:
-            self.statusBar().showMessage(f"Veri okuma hatası: {e}")
+            self.status_bar.showMessage(f"Veri okuma hatası: {e}")
 
     def update_fields(self, data):
         try:
@@ -373,10 +376,10 @@ class MainWindow(QMainWindow):
                 self.m.save(self.map_path)
                 self.webview.setHtml(open(self.map_path, "r").read())
         except Exception as e:
-            self.statusBar().showMessage(f"Güncelleme hatası: {e}")
+            self.status_bar.showMessage(f"Güncelleme hatası: {e}")
 
     def start_test_mode(self):
-        self.statusBar().showMessage(f"Uygulama test modunda çalışıyor.")
+        self.status_bar.showMessage(f"Uygulama test modunda çalışıyor.")
         self.port_selection_widget.setVisible(False)
         self.create_main_screen()
         self.test_timer = QTimer(self)
@@ -406,10 +409,10 @@ class MainWindow(QMainWindow):
             self.hyi.connect()
             self.hyi_start_button.setEnabled(False)
             self.hyi_stop_button.setEnabled(True)
-            self.statusBar().showMessage(f"HYİ: Seri port {self.hyi_port.currentText()} açıldı.")
+            self.status_bar.showMessage(f"HYİ: Seri port {self.hyi_port.currentText()} açıldı.")
         except Exception as e:
             self.hyi_io_status = False
-            self.statusBar().showMessage(f"HYİ'ye bağlantı hatası: {e}")
+            self.status_bar.showMessage(f"HYİ'ye bağlantı hatası: {e}")
             self.hyi_start_button.setEnabled(True)
 
     def stop_hyi(self):
@@ -418,9 +421,9 @@ class MainWindow(QMainWindow):
             self.hyi_io_status = False
             self.hyi_start_button.setEnabled(True)
             self.hyi_stop_button.setEnabled(False)
-            self.statusBar().showMessage(f"HYİ: {self.hyi_port.currentText()} bağlantısı kesildi.")
+            self.status_bar.showMessage(f"HYİ: {self.hyi_port.currentText()} bağlantısı kesildi.")
         except:
-            self.statusBar().showMessage(f"HYİ: {self.hyi_port.currentText()} bağlantısı kesilemedi.")
+            self.status_bar.showMessage(f"HYİ: {self.hyi_port.currentText()} bağlantısı kesilemedi.")
 
     def save_data(self):
         # Kullanıcıya dosya kaydetme yerini sor
@@ -431,9 +434,9 @@ class MainWindow(QMainWindow):
             try:
                 with open(file_path, 'w', encoding='utf-8') as file:
                     json.dump(self.data_list, file, indent=4, ensure_ascii=False)
-                self.statusBar().showMessage(f"Veriler {file_path} dosyasına kaydedildi.")
+                self.status_bar.showMessage(f"Veriler {file_path} dosyasına kaydedildi.")
             except Exception as e:
-                self.statusBar().showMessage(f"Veri kaydetme hatası: {e}")
+                self.status_bar.showMessage(f"Veri kaydetme hatası: {e}")
 
     def change_theme(self, state):
         if state == 0:

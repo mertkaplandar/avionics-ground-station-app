@@ -9,9 +9,10 @@ QTabWidget::pane {
 QTabBar::tab {
     background-color: #3c3c3c;
     color: #ffffff;
-    padding: 13px 72px;
-    margin-right: 1px;
-    font-size: 14px;
+    padding: 15px 39px;
+    font-size: 15px;
+    min-width: 100px; 
+    min-height: 15px; 
 }
 
 QTabBar::tab:selected {
@@ -87,6 +88,6 @@ QCheckBox {
 }
 
 QStatusBar {
-    color: #ffffff;
+    color: #000000;
     text-align: center;
 }

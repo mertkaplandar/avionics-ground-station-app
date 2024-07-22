@@ -21,11 +21,18 @@ class MainWindow(QMainWindow):
         self.status_bar = self.statusBar()
 
         self.hyi_io_status = False
+        self.test_mode_status = False
         self.data_list = []
 
-        with open("config.json", "r") as file:
-            self.config_json = json.loads(file.read())
-
+        try:
+            with open("config.json", "r") as file:
+                self.config_json = json.loads(file.read())
+        except FileNotFoundError:
+            with open("config.json", "w") as file:
+                file.write('{\n\t"theme": "White" \n}')
+            with open("config.json", "r") as file:
+                self.config_json = json.loads(file.read())
+        finally:
             if self.config_json["theme"] == "White":
                 with open("styles/style-white.qss", "r", encoding="utf-8") as style_file:
                     style_sheet = style_file.read()
@@ -34,6 +41,7 @@ class MainWindow(QMainWindow):
                 with open("styles/style-dark.qss", "r", encoding="utf-8") as style_file:
                     style_sheet = style_file.read()
                     self.setStyleSheet(style_sheet)
+
 
         self.init_port_selection_screen()
 
@@ -65,18 +73,21 @@ class MainWindow(QMainWindow):
 
         main_layout.addLayout(form_layout)
 
-        self.button_refresh_port = QPushButton("Yenile")
-        self.button_refresh_port.clicked.connect(self.refresh_port)
-        main_layout.addWidget(self.button_refresh_port)
-
-        self.button_select_ports = QPushButton("Bağlan")
+        self.button_select_ports = QPushButton("Connect")
         self.button_select_ports.clicked.connect(self.on_select_ports_clicked)
+        self.button_select_ports.setShortcut("Return")
         main_layout.addWidget(self.button_select_ports)
+
+        self.button_refresh_port = QPushButton("Refresh")
+        self.button_refresh_port.clicked.connect(self.refresh_port)
+        self.button_refresh_port.setShortcut("Ctrl+R")
+        main_layout.addWidget(self.button_refresh_port)
 
         main_layout.addSpacing(20)
 
-        self.button_test_mode = QPushButton("Test Modu")
+        self.button_test_mode = QPushButton("Test Mode")
         self.button_test_mode.clicked.connect(self.start_test_mode)
+        self.button_test_mode.setShortcut("Ctrl+Shift+T")
         main_layout.addWidget(self.button_test_mode)
 
     def create_main_screen(self):
@@ -112,12 +123,12 @@ class MainWindow(QMainWindow):
         title_label.setStyleSheet("font-size: 24px; font-weight: bold;")
         layout.addWidget(title_label, alignment=Qt.AlignCenter)
 
-        self.tab_widget.addTab(self.tab_intro, "Giriş")
+        self.tab_widget.addTab(self.tab_intro, "Entry")
 
 
     def create_data_tab(self):
         tab_veriler1 = QWidget()
-        self.tab_widget.addTab(tab_veriler1, "Veriler")
+        self.tab_widget.addTab(tab_veriler1, "Datas")
 
         form_layout1 = QFormLayout(tab_veriler1)
 
@@ -182,7 +193,7 @@ class MainWindow(QMainWindow):
 
         # Generate Folium Map
         self.m = folium.Map(location=[0, 0], zoom_start=16)
-        self.marker1 = folium.Marker([0, 0], popup='Roket', icon=folium.Icon(color='red')).add_to(self.m)
+        self.marker1 = folium.Marker([0, 0], popup='Rocket', icon=folium.Icon(color='red')).add_to(self.m)
 
         self.map_path = "map.html"
         self.m.save(self.map_path)
@@ -192,11 +203,11 @@ class MainWindow(QMainWindow):
         self.webview.setHtml(open(self.map_path, "r").read())
         layout.addWidget(self.webview)
 
-        self.map_updater_selector = QCheckBox("Haritayı Otomatik Güncelle")
+        self.map_updater_selector = QCheckBox("Auto Update Map")
         self.map_updater_selector.setChecked(True)
         layout.addWidget(self.map_updater_selector)
 
-        self.tab_widget.addTab(self.tab_map, "Harita")
+        self.tab_widget.addTab(self.tab_map, "Map")
 
     def create_serial_port_tab(self):
         tab_serial_port = QWidget()
@@ -206,7 +217,7 @@ class MainWindow(QMainWindow):
         self.text_edit_raw_data1.setReadOnly(True)
         layout.addWidget(self.text_edit_raw_data1)
 
-        self.tab_widget.addTab(tab_serial_port, "Seri Port")
+        self.tab_widget.addTab(tab_serial_port, "Serial Port")
 
     def create_hyi_tab(self):
         tab_hyi = QWidget()
@@ -250,8 +261,8 @@ class MainWindow(QMainWindow):
         main_layout_hyi.addLayout(form_layout_hyi)
 
         # Başlat ve Durdur butonları
-        self.hyi_start_button = QPushButton("Başlat", tab_hyi)
-        self.hyi_stop_button = QPushButton("Durdur", tab_hyi)
+        self.hyi_start_button = QPushButton("Start Data Transfer", tab_hyi)
+        self.hyi_stop_button = QPushButton("Stop Data Transfer", tab_hyi)
         self.hyi_stop_button.setEnabled(False)
 
         main_layout_hyi.addLayout(button_layout_hyi)
@@ -274,14 +285,17 @@ class MainWindow(QMainWindow):
         current_port_label = QLabel(f"{self.serial_port.portName() if hasattr(self, 'serial_port') else 'COM port bağlı değil'}", tab_settings)
         form_layout_settings.addRow("Port:", current_port_label)
 
+        current_baund_label = QLabel(f"{self.serial_port.baudRate() if hasattr(self, 'serial_port') else 'COM port bağlı değil'}", tab_settings)
+        form_layout_settings.addRow("Baund:", current_baund_label)
+
         # Bağlantıyı kesme butonu
-        disconnect_button = QPushButton("Bağlantıyı Kes", tab_settings)
+        disconnect_button = QPushButton("Disconnect Serial Port", tab_settings)
         disconnect_button.clicked.connect(self.disconnect_port)
         form_layout_settings.addRow(disconnect_button)
 
         form_layout_settings.addRow("", QLabel())
 
-        save_data_button = QPushButton("Verileri Kaydet", tab_settings)
+        save_data_button = QPushButton("Save Received Data", tab_settings)
         save_data_button.clicked.connect(self.save_data)
         form_layout_settings.addRow(save_data_button)
 
@@ -294,7 +308,7 @@ class MainWindow(QMainWindow):
 
         layout.addLayout(form_layout_settings)
 
-        self.tab_widget.addTab(tab_settings, "Ayarlar")
+        self.tab_widget.addTab(tab_settings, "Settings")
 
     def refresh_port(self):
         self.combo_box_ports.clear()
@@ -303,10 +317,16 @@ class MainWindow(QMainWindow):
             self.combo_box_ports.addItem(port.portName())
 
     def disconnect_port(self):
-        self.status_bar.showMessage(f"Yer İstasyonu: Seri port {self.serial_port.portName()} bağlantısı kesildi.")
-        self.serial_port.close()
-        self.tab_widget.clear()
-        self.init_port_selection_screen()
+        if self.test_mode_status:
+            self.status_bar.showMessage(f"Ground Station: Test mode disconnected.")
+            self.test_timer.stop()
+            self.tab_widget.clear()
+            self.init_port_selection_screen()
+        else:
+            self.status_bar.showMessage(f"Ground Station: Serial port {self.serial_port.portName()} disconnected.")
+            self.serial_port.close()
+            self.tab_widget.clear()
+            self.init_port_selection_screen()
 
     def on_select_ports_clicked(self):
         port1 = self.combo_box_ports.currentText()
@@ -316,12 +336,12 @@ class MainWindow(QMainWindow):
         self.serial_port.setPortName(port1)
 
         if self.serial_port.open(QIODevice.ReadOnly):
-            self.status_bar.showMessage(f"Yer İstasyonu: Seri port {port1} açıldı.")
+            self.status_bar.showMessage(f"Ground Station: Serial port {port1} opened.")
             self.serial_port.readyRead.connect(self.read_data)
             self.port_selection_widget.setVisible(False)
             self.create_main_screen()
         else:
-            self.status_bar.showMessage(f"Yer İstasyonu: Seri port {port1} açılamadı.")
+            self.status_bar.showMessage(f"Ground Station: Failed to open serial port {port1}.")
 
     def read_data(self):
         try:
@@ -349,10 +369,10 @@ class MainWindow(QMainWindow):
             # self.status_bar.showMessage(f"JSON çözümleme hatası: {e}")
             pass
         except ValueError:
-            self.status_bar.showMessage("Client ID değerini girin.")
+            self.status_bar.showMessage("Enter the Client ID value.")
             self.stop_hyi()
         except Exception as e:
-            self.status_bar.showMessage(f"Veri okuma hatası: {e}")
+            self.status_bar.showMessage(f"Data reading error: {e}")
 
     def update_fields(self, data):
         try:
@@ -376,15 +396,16 @@ class MainWindow(QMainWindow):
                 self.m.save(self.map_path)
                 self.webview.setHtml(open(self.map_path, "r").read())
         except Exception as e:
-            self.status_bar.showMessage(f"Güncelleme hatası: {e}")
+            self.status_bar.showMessage(f"Data update error: {e}")
 
     def start_test_mode(self):
-        self.status_bar.showMessage(f"Uygulama test modunda çalışıyor.")
+        self.test_mode_status = True
+        self.status_bar.showMessage(f"The application is running in test mode.")
         self.port_selection_widget.setVisible(False)
         self.create_main_screen()
         self.test_timer = QTimer(self)
         self.test_timer.timeout.connect(self.generate_test_data)
-        self.test_timer.start(1000)  # Every 1 second
+        self.test_timer.start(1000)  
 
     def generate_test_data(self):
         test_data = {
@@ -400,7 +421,8 @@ class MainWindow(QMainWindow):
             "yaw": random.uniform(-180, 180),
             "status": 1
         }
-        self.update_fields(json.dumps(test_data))
+
+        self.update_fields(test_data)
 
     def start_hyi(self):
         try:
@@ -409,10 +431,10 @@ class MainWindow(QMainWindow):
             self.hyi.connect()
             self.hyi_start_button.setEnabled(False)
             self.hyi_stop_button.setEnabled(True)
-            self.status_bar.showMessage(f"HYİ: Seri port {self.hyi_port.currentText()} açıldı.")
+            self.status_bar.showMessage(f"HYİ: Serial port {self.hyi_port.currentText()} opened.")
         except Exception as e:
             self.hyi_io_status = False
-            self.status_bar.showMessage(f"HYİ'ye bağlantı hatası: {e}")
+            self.status_bar.showMessage(f"Connection error to HYİ: {e}")
             self.hyi_start_button.setEnabled(True)
 
     def stop_hyi(self):
@@ -421,22 +443,22 @@ class MainWindow(QMainWindow):
             self.hyi_io_status = False
             self.hyi_start_button.setEnabled(True)
             self.hyi_stop_button.setEnabled(False)
-            self.status_bar.showMessage(f"HYİ: {self.hyi_port.currentText()} bağlantısı kesildi.")
+            self.status_bar.showMessage(f"HYI: {self.hyi_port.currentText()} connection was disconnected.")
         except:
-            self.status_bar.showMessage(f"HYİ: {self.hyi_port.currentText()} bağlantısı kesilemedi.")
+            self.status_bar.showMessage(f"HYI: {self.hyi_port.currentText()} connection was not disconnected.")
 
     def save_data(self):
         # Kullanıcıya dosya kaydetme yerini sor
         options = QFileDialog.Options()
-        file_path, _ = QFileDialog.getSaveFileName(self, "Verileri Kaydet", "", "JSON Files (*.json);;All Files (*)", options=options)
+        file_path, _ = QFileDialog.getSaveFileName(self, "Save Received Data", "", "JSON Files (*.json);;All Files (*)", options=options)
 
         if file_path:
             try:
                 with open(file_path, 'w', encoding='utf-8') as file:
                     json.dump(self.data_list, file, indent=4, ensure_ascii=False)
-                self.status_bar.showMessage(f"Veriler {file_path} dosyasına kaydedildi.")
+                self.status_bar.showMessage(f"The data was saved to file {file_path}.")
             except Exception as e:
-                self.status_bar.showMessage(f"Veri kaydetme hatası: {e}")
+                self.status_bar.showMessage(f"Data saving error: {e}")
 
     def change_theme(self, state):
         if state == 0:

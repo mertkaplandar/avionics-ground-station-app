@@ -33,11 +33,11 @@
 > - [🚀 Getting Started](#-getting-started)
 >   - [⚙️ Installation](#️-installation)
 >   - [🤖 Running avionics-ground-station-app](#-running-avionics-ground-station-app)
->   - [🧪 Tests](#-tests)
 > - [🛠 Project Roadmap](#-project-roadmap)
-> - [🤝 Contributing](#-contributing)
-> - [📄 License](#-license)
 > - [👏 Acknowledgments](#-acknowledgments)
+<!-- > - [🤝 Contributing](#-contributing) -->
+<!-- > - [📄 License](#-license) -->
+
 
 ---
 
@@ -121,7 +121,12 @@ A sample ground station system with the necessary explanations for the program t
 
 Ensure you have the following dependencies installed on your system:
 
-* **Python**: `version x.y.z`
+* **Python**: `3.12`
+
+- PyQt5
+- PyQtWebEngine
+- pyserial
+- folium
 
 ### ⚙️ Installation
 

@@ -2,4 +2,3 @@ PyQt5
 PyQtWebEngine
 pyserial
 folium
-matplotlib

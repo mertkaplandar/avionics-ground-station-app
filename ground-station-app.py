@@ -3,7 +3,7 @@ import json
 import random
 import folium
 import datetime
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QFileDialog, QCheckBox, QLabel, QPushButton, QComboBox, QLineEdit, QTabWidget, QFormLayout, QTextEdit
+from PyQt5.QtWidgets import *
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtSerialPort import QSerialPort, QSerialPortInfo
 from PyQt5.QtCore import QIODevice, QTimer
@@ -429,6 +429,9 @@ class MainWindow(QMainWindow):
             self.hyi_io_status = True
             self.hyi = HYIPacket(port=self.hyi_port.currentText(), baudrate=self.hyi_baud_rate.currentText())
             self.hyi.connect()
+            self.hyi_port.setEnabled(False)
+            self.hyi_baud_rate.setEnabled(False)
+            self.hyi_team_id.setEnabled(False)
             self.hyi_start_button.setEnabled(False)
             self.hyi_stop_button.setEnabled(True)
             self.status_bar.showMessage(f"HYİ: Serial port {self.hyi_port.currentText()} opened.")
@@ -442,6 +445,9 @@ class MainWindow(QMainWindow):
             self.hyi.disconnect()
             self.hyi_io_status = False
             self.hyi_start_button.setEnabled(True)
+            self.hyi_port.setEnabled(True)
+            self.hyi_baud_rate.setEnabled(True)
+            self.hyi_team_id.setEnabled(True)
             self.hyi_stop_button.setEnabled(False)
             self.status_bar.showMessage(f"HYI: {self.hyi_port.currentText()} connection was disconnected.")
         except:

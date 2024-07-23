@@ -43,13 +43,21 @@
 
 ## 📍 Overview
 
-HTTP error 401 for prompt `overview`
+This application is designed to display data from an avionics system. The main reason for its design is to display data from the avionics system of the Atmaca Rocket Team's RFAL1 rocket participating in the 2024 Teknofest Rocket Competition and also to transmit the incoming data to the referee ground station.
+
+A sample ground station system with the necessary explanations for the program to work is included in the link [here](https://github.com/mertkaplandar/rocket-ground-station-hardware).
 
 ---
 
 ## 📦 Features
 
-HTTP error 401 for prompt `features`
+- Provides connection to the ground station system by selecting COM port and baund rate
+- Displays data from the ground station with text boxes
+- Visualizes latitude and longitude data from the ground station on the map
+- Displays the serial port of the ground station system
+- Transmits data received from the avionics system to the referee ground station in accordance with the structure in the Teknofest 2024 Rocket Competition Specification
+- Provides dark and light theme options
+- Saves received data in json format with instant time and date data.
 
 ---
 
@@ -129,7 +137,19 @@ git clone https://github.com/mertkaplandar/avionics-ground-station-app
 cd avionics-ground-station-app
 ```
 
-3. Install the dependencies:
+3. Create venv:
+
+```sh
+python -m venv env
+```
+
+4. Activate the venv:
+
+```sh
+env/Scripts/activate
+```
+
+5. Install the dependencies:
 
 ```sh
 pip install -r requirements.txt
@@ -198,10 +218,10 @@ Once your PR is reviewed and approved, it will be merged into the main branch.
 
 --- -->
 
-## 📄 License
+<!-- ## 📄 License
 
 This project is protected under the [SELECT-A-LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
-,
+, -->
 
 ## 👏 Acknowledgments
 

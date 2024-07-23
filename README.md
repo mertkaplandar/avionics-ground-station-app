@@ -4,18 +4,18 @@
 <p align="center">
     <h1 align="center">AVIONICS-GROUND-STATION-APP</h1>
 </p>
-<p align="center">
+<!-- <p align="center">
     <em>HTTP error 401 for prompt `slogan`</em>
-</p>
+</p> -->
 <p align="center">
 	<!-- <img src="https://img.shields.io/github/license/mertkaplandar/avionics-ground-station-app?style=flat&color=0080ff" alt="license"> -->
 	<img src="https://img.shields.io/github/last-commit/mertkaplandar/avionics-ground-station-app?style=flat&logo=git&logoColor=white&color=0080ff" alt="last-commit">
 	<img src="https://img.shields.io/github/languages/top/mertkaplandar/avionics-ground-station-app?style=flat&color=0080ff" alt="repo-top-language">
 	<img src="https://img.shields.io/github/languages/count/mertkaplandar/avionics-ground-station-app?style=flat&color=0080ff" alt="repo-language-count">
 <p>
-<p align="center">
+<!-- <p align="center">
 		<em>Developed with the software and tools below.</em>
-</p>
+</p> -->
 <p align="center">
 	<img src="https://img.shields.io/badge/Folium-77B829.svg?style=flat&logo=Folium&logoColor=white" alt="Folium">
 	<img src="https://img.shields.io/badge/Python-3776AB.svg?style=flat&logo=Python&logoColor=white" alt="Python">

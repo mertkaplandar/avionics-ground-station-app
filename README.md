@@ -17,10 +17,10 @@
 		<em>Developed with the software and tools below.</em>
 </p> -->
 <p align="center">
-	<img src="https://img.shields.io/badge/Folium-77B829.svg?style=flat&logo=Folium&logoColor=white" alt="Folium">
-	<img src="https://img.shields.io/badge/Python-3776AB.svg?style=flat&logo=Python&logoColor=white" alt="Python">
-	<img src="https://img.shields.io/badge/JSON-000000.svg?style=flat&logo=JSON&logoColor=white" alt="JSON">
+    <img src="https://img.shields.io/badge/Python-3776AB.svg?style=flat&logo=Python&logoColor=white" alt="Python">
     <img src="https://img.shields.io/badge/Qt-000000.svg?style=flat&logo=Qt" alt="Qt">
+	<img src="https://img.shields.io/badge/Folium-77B829.svg?style=flat&logo=Folium&logoColor=white" alt="Folium">
+	<img src="https://img.shields.io/badge/JSON-000000.svg?style=flat&logo=JSON&logoColor=white" alt="JSON">
 </p>
 <hr>
 
@@ -81,40 +81,6 @@ A sample ground station system with the necessary explanations for the program t
         └── style-white.qss
 ```
 
----
-
-## 🧩 Modules
-
-<details closed><summary>.</summary>
-
-| File                                                                                                                    | Summary                                           |
-| ---                                                                                                                     | ---                                               |
-| [config.json](https://github.com/mertkaplandar/avionics-ground-station-app/blob/master/config.json)                     | HTTP error 401 for prompt `config.json`           |
-| [ground-station-app.py](https://github.com/mertkaplandar/avionics-ground-station-app/blob/master/ground-station-app.py) | HTTP error 401 for prompt `ground-station-app.py` |
-| [hyi_controller.py](https://github.com/mertkaplandar/avionics-ground-station-app/blob/master/hyi_controller.py)         | HTTP error 401 for prompt `hyi_controller.py`     |
-| [requirements.txt](https://github.com/mertkaplandar/avionics-ground-station-app/blob/master/requirements.txt)           | HTTP error 401 for prompt `requirements.txt`      |
-
-</details>
-
-<details closed><summary>resources</summary>
-
-| File                                                                                                        | Summary                                          |
-| ---                                                                                                         | ---                                              |
-| [entry.html](https://github.com/mertkaplandar/avionics-ground-station-app/blob/master/resources/entry.html) | HTTP error 401 for prompt `resources/entry.html` |
-
-</details>
-
-<details closed><summary>styles</summary>
-
-| File                                                                                                               | Summary                                            |
-| ---                                                                                                                | ---                                                |
-| [style-dark.qss](https://github.com/mertkaplandar/avionics-ground-station-app/blob/master/styles/style-dark.qss)   | HTTP error 401 for prompt `styles/style-dark.qss`  |
-| [style-white.qss](https://github.com/mertkaplandar/avionics-ground-station-app/blob/master/styles/style-white.qss) | HTTP error 401 for prompt `styles/style-white.qss` |
-
-</details>
-
----
-
 ## 🚀 Getting Started
 
 ***Requirements***
@@ -122,11 +88,6 @@ A sample ground station system with the necessary explanations for the program t
 Ensure you have the following dependencies installed on your system:
 
 * **Python**: `3.12`
-
-- PyQt5
-- PyQtWebEngine
-- pyserial
-- folium
 
 ### ⚙️ Installation
 
@@ -180,9 +141,7 @@ pytest
 
 ## 🛠 Project Roadmap
 
-- [X] `► INSERT-TASK-1`
-- [ ] `► INSERT-TASK-2`
-- [ ] `► ...`
+- [ ] `► `
 
 <!-- --- 
 
@@ -228,10 +187,4 @@ Once your PR is reviewed and approved, it will be merged into the main branch.
 This project is protected under the [SELECT-A-LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
 , -->
 
-## 👏 Acknowledgments
 
-- List any resources, contributors, inspiration, etc. here.
-
-[**Return**](#-quick-links)
-
----

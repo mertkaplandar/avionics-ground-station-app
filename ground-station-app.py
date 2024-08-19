@@ -8,14 +8,14 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtSerialPort import QSerialPort, QSerialPortInfo
 from PyQt5.QtCore import QIODevice, QTimer
 from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QUrl
 from hyi_controller import HYIPacket
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Atmaca Roket Takımı - Yer İstasyonu Veri Görüntüleme Aracı")
-        self.setGeometry(400, 200, 1100, 650)
+        self.setWindowTitle("Atmaca Rocket Team - Ground Station Data Visualization Tool")
+        self.setGeometry(400, 200, 1090, 650)
         self.setWindowIcon(QIcon("resources/icon.ico"))
 
         self.status_bar = self.statusBar()
@@ -69,6 +69,7 @@ class MainWindow(QMainWindow):
         self.combo_box_baud_rate1 = QComboBox()
         baud_rates = ["9600", "19200", "38400", "57600", "115200"]
         self.combo_box_baud_rate1.addItems(baud_rates)
+        self.combo_box_baud_rate1.setCurrentIndex(4)
         form_layout.addRow("Baund", self.combo_box_baud_rate1)
 
         main_layout.addLayout(form_layout)
@@ -157,15 +158,15 @@ class MainWindow(QMainWindow):
         self.line_edit_speed1.setReadOnly(True)
         form_layout1.addRow(self.label_speed1, self.line_edit_speed1)
 
-        self.label_pressure1 = QLabel("Pressure:", tab_veriler1)
-        self.line_edit_pressure1 = QLineEdit(tab_veriler1)
-        self.line_edit_pressure1.setReadOnly(True)
-        form_layout1.addRow(self.label_pressure1, self.line_edit_pressure1)
-
         self.label_altitude1 = QLabel("Altitude:", tab_veriler1)
         self.line_edit_altitude1 = QLineEdit(tab_veriler1)
         self.line_edit_altitude1.setReadOnly(True)
         form_layout1.addRow(self.label_altitude1, self.line_edit_altitude1)
+
+        self.label_pressure1 = QLabel("Pressure:", tab_veriler1)
+        self.line_edit_pressure1 = QLineEdit(tab_veriler1)
+        self.line_edit_pressure1.setReadOnly(True)
+        form_layout1.addRow(self.label_pressure1, self.line_edit_pressure1)
 
         self.label_pitch1 = QLabel("Pitch:", tab_veriler1)
         self.line_edit_pitch1 = QLineEdit(tab_veriler1)
@@ -191,21 +192,9 @@ class MainWindow(QMainWindow):
         self.tab_map = QWidget()
         layout = QVBoxLayout(self.tab_map)
 
-        # Generate Folium Map
-        self.m = folium.Map(location=[0, 0], zoom_start=16)
-        self.marker1 = folium.Marker([0, 0], popup='Rocket', icon=folium.Icon(color='red')).add_to(self.m)
-
-        self.map_path = "map.html"
-        self.m.save(self.map_path)
-
-        # Embed Folium Map using QWebEngineView
         self.webview = QWebEngineView()
-        self.webview.setHtml(open(self.map_path, "r").read())
+        self.webview.setUrl(QUrl("file:///map.html"))
         layout.addWidget(self.webview)
-
-        self.map_updater_selector = QCheckBox("Auto Update Map")
-        self.map_updater_selector.setChecked(True)
-        layout.addWidget(self.map_updater_selector)
 
         self.tab_widget.addTab(self.tab_map, "Map")
 
@@ -245,7 +234,7 @@ class MainWindow(QMainWindow):
         self.hyi_team_id = QLineEdit(tab_hyi)
         form_layout_hyi.addRow("Team ID:", self.hyi_team_id)
 
-        form_layout_hyi.addRow("", QLabel())
+        form_layout_hyi.addRow(QLabel("<hr>"))
 
         self.packet_counter_label = QLabel(tab_hyi)
         form_layout_hyi.addRow("Counter:", self.packet_counter_label)
@@ -291,15 +280,18 @@ class MainWindow(QMainWindow):
         # Bağlantıyı kesme butonu
         disconnect_button = QPushButton("Disconnect Serial Port", tab_settings)
         disconnect_button.clicked.connect(self.disconnect_port)
-        form_layout_settings.addRow(disconnect_button)
-
-        form_layout_settings.addRow("", QLabel())
+        form_layout_settings.addRow(disconnect_button)      
+        
+        form_layout_settings.addRow(QLabel("<hr>"))
 
         save_data_button = QPushButton("Save Received Data", tab_settings)
         save_data_button.clicked.connect(self.save_data)
         form_layout_settings.addRow(save_data_button)
 
-        form_layout_settings.addRow("", QLabel())
+        self.save_data_status_label = QLabel("Last Saved Data:", tab_settings)
+        form_layout_settings.addRow(self.save_data_status_label)
+
+        form_layout_settings.addRow(QLabel("<hr>"))
 
         self.theme_changer = QComboBox(tab_settings)
         self.theme_changer.addItems(["Dark", "White"])
@@ -388,13 +380,8 @@ class MainWindow(QMainWindow):
             self.line_edit_yaw1.setText(str(data.get("yaw", "")))
             self.line_edit_status1.setText(str(data.get("status", "")))
             
-            if self.map_updater_selector.isChecked():
-                latitude = data.get("latitude", 0.0)
-                longitude = data.get("longitude", 0.0)
-                self.marker1.location = [latitude, longitude]
-                self.m.location = [latitude, longitude]
-                self.m.save(self.map_path)
-                self.webview.setHtml(open(self.map_path, "r").read())
+            js_code = f"updateMarker({data.get("latitude", "")}, {data.get("longitude", "")});"
+            self.webview.page().runJavaScript(js_code)
         except Exception as e:
             self.status_bar.showMessage(f"Data update error: {e}")
 
@@ -451,6 +438,7 @@ class MainWindow(QMainWindow):
             self.hyi_stop_button.setEnabled(False)
             self.status_bar.showMessage(f"HYI: {self.hyi_port.currentText()} connection was disconnected.")
         except:
+            self.hyi_io_status = True
             self.status_bar.showMessage(f"HYI: {self.hyi_port.currentText()} connection was not disconnected.")
 
     def save_data(self):
@@ -463,6 +451,7 @@ class MainWindow(QMainWindow):
                 with open(file_path, 'w', encoding='utf-8') as file:
                     json.dump(self.data_list, file, indent=4, ensure_ascii=False)
                 self.status_bar.showMessage(f"The data was saved to file {file_path}.")
+                self.save_data_status_label.setText(f"Last Saved Data: {file_path} - {str(datetime.datetime.now())[:-7]}")
             except Exception as e:
                 self.status_bar.showMessage(f"Data saving error: {e}")
 

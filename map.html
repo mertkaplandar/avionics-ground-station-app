@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>GPS Harita</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        // Haritayı oluştur
+        var map = L.map('map').setView([0, 0], 18);
+
+        // Harita döşemelerini yükle
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Global marker değişkeni tanımla
+        var marker = L.marker([0, 0]).addTo(map);
+
+        // Marker'ı güncelleme fonksiyonu
+        function updateMarker(lat, lng) {
+            var latlng = L.latLng(lat, lng);
+            marker.setLatLng(latlng).update();
+            marker.bindPopup("Rocket", lat, lng);
+            map.setView(latlng, map.getZoom());
+        }
+
+        // Fonksiyonun tanımlandığını kontrol etme
+        console.log('updateMarker fonksiyonu tanımlandı');
+    </script>
+</body>
+</html>
